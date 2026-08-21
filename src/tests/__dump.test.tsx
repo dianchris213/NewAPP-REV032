@@ -14,6 +14,6 @@ it("dump", async () => {
   await waitFor(() => expect(document.querySelectorAll('[data-testid^="category-item-"]').length).toBe(5));
   screen.getByTestId("category-search").focus();
   const seq: (string|null)[] = [];
-  for (let i=0;i<6;i++){ await user.tab(); seq.push((document.activeElement as HTMLElement)?.dataset["testid"] ?? (document.activeElement as HTMLElement)?.tagName ?? null); }
+  for (let i=0;i<10;i++){ await user.tab(); seq.push((document.activeElement as HTMLElement)?.dataset["testid"] ?? (document.activeElement as HTMLElement)?.tagName ?? null); }
   console.log("SEQ", seq);
 });
