@@ -121,10 +121,7 @@ test.describe("Kategori Transaksi — collapse state consistency", () => {
     // Clearing the filter restores the persisted collapsed preview.
     await activate(page.getByTestId("category-reset-filter"));
     await expect(rows).toHaveCount(3);
-    await expect(page.getByTestId("category-toggle-all")).toHaveAttribute(
-      "aria-expanded",
-      "false",
-    );
+    await expect(page.getByTestId("category-toggle-all")).toHaveAttribute("aria-expanded", "false");
     await expect(page.getByTestId("category-collapsed-notice")).toHaveText("3/5");
   });
 });

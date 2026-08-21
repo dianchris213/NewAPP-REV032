@@ -27,7 +27,6 @@ function focusable(root: HTMLElement | null): HTMLElement[] {
   );
 }
 
-
 /**
  * Bank-grade modal accessibility: focus moves into the dialog on open, Esc
  * closes, Tab/Shift+Tab are trapped inside the container, and focus returns to

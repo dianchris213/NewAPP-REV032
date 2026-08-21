@@ -79,9 +79,7 @@ test.describe("Kategori Transaksi — active selection highlight", () => {
     await expect(sheet).toHaveScreenshot("category-list-filled-active.png");
   });
 
-  test("matches the collapsed baseline with the highlighted show-all control", async ({
-    page,
-  }) => {
+  test("matches the collapsed baseline with the highlighted show-all control", async ({ page }) => {
     const sheet = await openSheet(page);
     const rows = page.locator('[data-testid^="category-item-"]');
 
