@@ -94,7 +94,6 @@ test.describe("Kategori Transaksi — edge cases", () => {
       await expect(type).toHaveValue("income");
       expect(await focusedTestId(page)).toBe("category-filter-type");
 
-
       await page.getByTestId("category-search").focus();
       expect(await tabTrail(page, 3)).toEqual([
         "category-search",

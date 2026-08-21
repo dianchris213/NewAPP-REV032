@@ -307,3 +307,24 @@ E2E (Playwright):
 Fix shipped with these tests: `src/hooks/use-modal-a11y.ts` no longer relies on `offsetParent` to detect hidden nodes, so the modal focus trap enumerates every focusable control (previously it collapsed to a single node in layout-less environments, making Tab appear stuck).
 
 Verification: `bunx tsc --noEmit`, `bun run lint`, `bunx vitest run` (114 tests) and `bunx playwright test` (31 tests) all pass; no stale expectation such as the old "2/5 · Reset filter" text remains.
+
+## CI and snapshot tolerance (REV031)
+
+`.github/workflows/ci.yml` runs on every push and pull request (plus manual dispatch) and executes, in order: `bun run lint`, `bunx tsc --noEmit`, `bunx vitest run`, `bunx playwright test`. Traces, screenshots, videos and the current baselines are uploaded as artifacts on every run.
+
+Snapshot update scripts:
+
+```bash
+bun run test:update         # vitest structural snapshots (vitest run -u)
+bun run e2e:update          # all Playwright baselines
+bun run e2e:update:visual   # only the Kategori Transaksi visual baselines
+```
+
+Visual tolerance policy (`playwright.config.ts` + `e2e/screenshot.css`): fonts are pinned to a system stack and text rendering, ligatures, kerning, animations, transitions and the caret are frozen, so cross-machine glyph rasterisation no longer moves pixels. On top of that, `threshold: 0.15` with `maxDiffPixelRatio: 0.015` absorbs anti-aliased edges only — a changed highlight color, ring or fill repaints a whole control and still fails, so active-selection accuracy is unchanged.
+
+Edge-case suites added:
+
+- `src/tests/category-filter-edge-cases.test.tsx` — no Jenis selected (no reset control, self-consistent collapse state), empty category list (empty state, no reset/summary/show-all, filters still focusable), filter that matches nothing, and rapid successive filter changes where focus stays on the changed control and the Tab order stays identical.
+- `e2e/category-filter-edge-cases.spec.ts` — the same edge cases in the browser, including a regression guard that exactly one "Reset filter" control is ever rendered.
+
+Duplicate removed: the category filter summary row rendered a second "Reset filter" button next to the toolbar one. The row is now a pure `role="status"` count (`N/M`); the single reset lives in the filter toolbar (`category-reset-filter`). Recommendation kept the toolbar button because it sits in the natural Tab order right after the filter controls and is present for every active filter, not only when rows are hidden. A review of the other screens found no further duplicated actions — `wallet-filter-reset` (Sumber Dana) and `tx-reset-button` (Semua Transaksi) are single controls on separate surfaces.

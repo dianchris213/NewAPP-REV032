@@ -84,7 +84,6 @@ describe("Kategori Transaksi — filter edge cases", () => {
     const collapsed = toggle.getAttribute("data-state") === "collapsed";
     expect(toggle.getAttribute("aria-expanded")).toBe(String(!collapsed));
     expect(toggle.getAttribute("aria-controls")).toBe("category-list");
-
   });
 
   it("shows the empty state without a reset button and keeps filters usable", async () => {
