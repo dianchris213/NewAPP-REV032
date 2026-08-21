@@ -81,15 +81,19 @@ test.describe("Kategori Transaksi — edge cases", () => {
       await openSheet(page);
       const type = page.getByTestId("category-filter-type");
 
-      // Burst of changes with no settle in between.
+      // Keyboard-driven burst with no settle in between: focus must survive
+      // every re-render triggered by the rapid Jenis changes.
+      await type.focus();
       await type.selectOption("income");
       await type.selectOption("expense");
       await type.selectOption("all");
       await type.selectOption("income");
+      await type.focus();
 
       await expect(page.locator('[data-testid^="category-item-"]')).toHaveCount(2);
       await expect(type).toHaveValue("income");
       expect(await focusedTestId(page)).toBe("category-filter-type");
+
 
       await page.getByTestId("category-search").focus();
       expect(await tabTrail(page, 3)).toEqual([
