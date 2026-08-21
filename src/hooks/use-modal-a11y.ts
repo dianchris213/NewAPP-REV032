@@ -3,12 +3,30 @@ import { useEffect, useRef } from "react";
 const FOCUSABLE =
   'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
+/**
+ * Hidden detection that does not depend on a layout engine.
+ *
+ * `offsetParent` alone reported *every* element as hidden in jsdom-based
+ * tests, which collapsed the trap to a single node and made Tab appear stuck.
+ * Style/attribute inspection behaves identically in the browser and in tests.
+ */
+function isHidden(el: HTMLElement): boolean {
+  if (el.hasAttribute("hidden") || el.getAttribute("aria-hidden") === "true") return true;
+  if (el.closest('[hidden],[aria-hidden="true"]')) return true;
+  for (let node: HTMLElement | null = el; node; node = node.parentElement) {
+    const style = getComputedStyle(node);
+    if (style.display === "none" || style.visibility === "hidden") return true;
+  }
+  return false;
+}
+
 function focusable(root: HTMLElement | null): HTMLElement[] {
   if (!root) return [];
   return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
-    (el) => el.offsetParent !== null || el === document.activeElement,
+    (el) => el === document.activeElement || !isHidden(el),
   );
 }
+
 
 /**
  * Bank-grade modal accessibility: focus moves into the dialog on open, Esc
