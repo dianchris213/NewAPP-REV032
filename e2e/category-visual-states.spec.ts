@@ -60,3 +60,36 @@ test.describe("Kategori Transaksi — visual states", () => {
     });
   });
 });
+
+/**
+ * Extra baselines requested for the filter highlight: a fully populated list
+ * and the collapsed preview, both with an active selection highlighted
+ * (search focus / selected Jenis option). Refresh with `bun run e2e:update`.
+ */
+test.describe("Kategori Transaksi — active selection highlight", () => {
+  test.use({ seed: MANY_CATEGORIES_STATE });
+
+  test("matches the filled list baseline with the active Jenis highlighted", async ({ page }) => {
+    const sheet = await openSheet(page);
+    const rows = page.locator('[data-testid^="category-item-"]');
+
+    await expect(rows).toHaveCount(5);
+    await page.getByTestId("category-filter-type").focus();
+    await expect(page.getByTestId("category-filter-type")).toHaveValue("all");
+    await expect(sheet).toHaveScreenshot("category-list-filled-active.png");
+  });
+
+  test("matches the collapsed baseline with the highlighted show-all control", async ({
+    page,
+  }) => {
+    const sheet = await openSheet(page);
+    const rows = page.locator('[data-testid^="category-item-"]');
+
+    await activate(page.getByTestId("category-toggle-all"));
+    await expect(rows).toHaveCount(3);
+    const toggle = page.getByTestId("category-toggle-all");
+    await expect(toggle).toHaveText("Tampilkan semua (5)");
+    await toggle.focus();
+    await expect(sheet).toHaveScreenshot("category-list-collapsed-active.png");
+  });
+});
