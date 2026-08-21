@@ -1367,7 +1367,6 @@ export function CategorySheet({ onClose }: { onClose: () => void }) {
           </div>
         ) : null}
 
-
         <ul
           id="category-list"
           aria-label={copy.categories}
