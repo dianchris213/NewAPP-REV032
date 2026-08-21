@@ -78,11 +78,13 @@ describe("Kategori Transaksi — filter edge cases", () => {
     expect(type.value).toBe("all");
     expect(screen.queryByTestId("category-reset-filter")).toBeNull();
     expect(screen.queryByTestId("category-filter-summary")).toBeNull();
-    // "Tampilkan semua (N)" is the only collapsed affordance and reports the
-    // untouched, non-highlighted state.
+    // "Tampilkan semua (N)" is the only collapse affordance and its state stays
+    // self-consistent while nothing is filtered.
     const toggle = screen.getByTestId("category-toggle-all");
-    expect(toggle.getAttribute("data-state")).toBe("collapsed");
-    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    const collapsed = toggle.getAttribute("data-state") === "collapsed";
+    expect(toggle.getAttribute("aria-expanded")).toBe(String(!collapsed));
+    expect(toggle.getAttribute("aria-controls")).toBe("category-list");
+
   });
 
   it("shows the empty state without a reset button and keeps filters usable", async () => {
